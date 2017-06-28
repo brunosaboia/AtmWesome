@@ -17,5 +17,9 @@ namespace Coinify.Web.Models
         public DbSet<Coinify.Web.Models.Coin> Coin { get; set; }
 
         public DbSet<Coinify.Web.Models.Note> Note { get; set; }
+
+        public DbSet<Coinify.Web.Models.User> User { get; set; }
+
+        public DbSet<Coinify.Web.Models.CoinSize> CoinSize { get; set; }
     }
 }

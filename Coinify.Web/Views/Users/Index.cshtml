@@ -1,4 +1,4 @@
-@model IEnumerable<Coinify.Web.Models.Coin>
+@model IEnumerable<Coinify.Web.Models.User>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,7 +13,7 @@
     <thead>
         <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Value)
+                    @Html.DisplayNameFor(model => model.Name)
                 </th>
             <th></th>
         </tr>
@@ -22,12 +22,12 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Value)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.CoinId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CoinId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CoinId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
             </td>
         </tr>
 }

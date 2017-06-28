@@ -1,4 +1,4 @@
-@model Coinify.Web.Models.Coin
+@model Coinify.Web.Models.CoinSize
 
 @{
     ViewData["Title"] = "Create";
@@ -8,14 +8,14 @@
 
 <form asp-action="Create">
     <div class="form-horizontal">
-        <h4>Coin</h4>
+        <h4>CoinSize</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="Value" class="col-md-2 control-label"></label>
+            <label asp-for="Size" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="Value" class="form-control" />
-                <span asp-validation-for="Value" class="text-danger"></span>
+                <input asp-for="Size" class="form-control" />
+                <span asp-validation-for="Size" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">

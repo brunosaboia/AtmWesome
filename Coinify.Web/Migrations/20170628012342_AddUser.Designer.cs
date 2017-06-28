@@ -8,9 +8,10 @@ using Coinify.Web.Models;
 namespace Coinify.Web.Migrations
 {
     [DbContext(typeof(CoinifyWebContext))]
-    partial class CoinifyWebContextModelSnapshot : ModelSnapshot
+    [Migration("20170628012342_AddUser")]
+    partial class AddUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -21,27 +22,13 @@ namespace Coinify.Web.Migrations
                     b.Property<int>("CoinId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("SizeCoinSizeId");
+                    b.Property<int>("Size");
 
                     b.Property<int>("Value");
 
                     b.HasKey("CoinId");
 
-                    b.HasIndex("SizeCoinSizeId");
-
                     b.ToTable("Coin");
-                });
-
-            modelBuilder.Entity("Coinify.Web.Models.CoinSize", b =>
-                {
-                    b.Property<int>("CoinSizeId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("Size");
-
-                    b.HasKey("CoinSizeId");
-
-                    b.ToTable("CoinSize");
                 });
 
             modelBuilder.Entity("Coinify.Web.Models.Note", b =>
@@ -66,13 +53,6 @@ namespace Coinify.Web.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("User");
-                });
-
-            modelBuilder.Entity("Coinify.Web.Models.Coin", b =>
-                {
-                    b.HasOne("Coinify.Web.Models.CoinSize", "Size")
-                        .WithMany()
-                        .HasForeignKey("SizeCoinSizeId");
                 });
         }
     }

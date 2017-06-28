@@ -1,4 +1,4 @@
-@model Coinify.Web.Models.Coin
+@model Coinify.Web.Models.CoinSize
 
 @{
     ViewData["Title"] = "Delete";
@@ -8,15 +8,15 @@
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Coin</h4>
+    <h4>CoinSize</h4>
     <hr />
     <dl class="dl-horizontal">
-        <input type="hidden" asp-for="CoinId" />
+        <input type="hidden" asp-for="CoinSizeId" />
         <dt>
-            @Html.DisplayNameFor(model => model.Value)
+            @Html.DisplayNameFor(model => model.Size)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Value)
+            @Html.DisplayFor(model => model.Size)
         </dd>
     </dl>
     

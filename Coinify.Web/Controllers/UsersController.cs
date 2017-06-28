@@ -9,22 +9,22 @@ using Coinify.Web.Models;
 
 namespace Coinify.Web.Controllers
 {
-    public class CoinsController : Controller
+    public class UsersController : Controller
     {
         private readonly CoinifyWebContext _context;
 
-        public CoinsController(CoinifyWebContext context)
+        public UsersController(CoinifyWebContext context)
         {
             _context = context;    
         }
 
-        // GET: Coins
+        // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Coin.ToListAsync());
+            return View(await _context.User.ToListAsync());
         }
 
-        // GET: Coins/Details/5
+        // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +32,39 @@ namespace Coinify.Web.Controllers
                 return NotFound();
             }
 
-            var coin = await _context.Coin
-                .SingleOrDefaultAsync(m => m.CoinId == id);
-            if (coin == null)
+            var user = await _context.User
+                .SingleOrDefaultAsync(m => m.UserId == id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(coin);
+            return View(user);
         }
 
-        // GET: Coins/Create
+        // GET: Users/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Coins/Create
+        // POST: Users/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CoinId,Value")] Coin coin)
+        public async Task<IActionResult> Create([Bind("UserId,Name")] User user)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(coin);
+                _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(coin);
+            return View(user);
         }
 
-        // GET: Coins/Edit/5
+        // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +72,22 @@ namespace Coinify.Web.Controllers
                 return NotFound();
             }
 
-            var coin = await _context.Coin.SingleOrDefaultAsync(m => m.CoinId == id);
-            if (coin == null)
+            var user = await _context.User.SingleOrDefaultAsync(m => m.UserId == id);
+            if (user == null)
             {
                 return NotFound();
             }
-            return View(coin);
+            return View(user);
         }
 
-        // POST: Coins/Edit/5
+        // POST: Users/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CoinId,Value")] Coin coin)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Name")] User user)
         {
-            if (id != coin.CoinId)
+            if (id != user.UserId)
             {
                 return NotFound();
             }
@@ -96,12 +96,12 @@ namespace Coinify.Web.Controllers
             {
                 try
                 {
-                    _context.Update(coin);
+                    _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CoinExists(coin.CoinId))
+                    if (!UserExists(user.UserId))
                     {
                         return NotFound();
                     }
@@ -112,10 +112,10 @@ namespace Coinify.Web.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(coin);
+            return View(user);
         }
 
-        // GET: Coins/Delete/5
+        // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +123,30 @@ namespace Coinify.Web.Controllers
                 return NotFound();
             }
 
-            var coin = await _context.Coin
-                .SingleOrDefaultAsync(m => m.CoinId == id);
-            if (coin == null)
+            var user = await _context.User
+                .SingleOrDefaultAsync(m => m.UserId == id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(coin);
+            return View(user);
         }
 
-        // POST: Coins/Delete/5
+        // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var coin = await _context.Coin.SingleOrDefaultAsync(m => m.CoinId == id);
-            _context.Coin.Remove(coin);
+            var user = await _context.User.SingleOrDefaultAsync(m => m.UserId == id);
+            _context.User.Remove(user);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        private bool CoinExists(int id)
+        private bool UserExists(int id)
         {
-            return _context.Coin.Any(e => e.CoinId == id);
+            return _context.User.Any(e => e.UserId == id);
         }
     }
 }
