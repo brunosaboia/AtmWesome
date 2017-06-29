@@ -12,5 +12,10 @@ namespace Coinify.Web.Models
         [Required]
         [Display(Name = "Size (in mm)")]
         public int Size { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Size} mm";
+        }
     }
 }

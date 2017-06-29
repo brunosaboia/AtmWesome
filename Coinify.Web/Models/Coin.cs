@@ -6,8 +6,10 @@ namespace Coinify.Web.Models
     {
         public int CoinId { get; set; }
         [Required]
+        [Display(Name = "Coin Size")]
         public CoinSize Size { get; set; }
         [Required]
+        [Display(Name = "Coin Value")]
         public int Value { get; set; }
     }
 }
