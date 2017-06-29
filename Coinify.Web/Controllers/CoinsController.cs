@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Coinify.Web.Models;
+using Coinify.Web.Models.ViewModels;
 
 namespace Coinify.Web.Controllers
 {
@@ -13,15 +14,29 @@ namespace Coinify.Web.Controllers
     {
         private readonly CoinifyWebContext _context;
 
+        private async Task<IEnumerable<SelectListItem>> GetCoinSizes()
+        {
+            var sizes = await _context.CoinSize.ToListAsync();
+
+            var model = sizes.Select(s =>
+                new SelectListItem
+                {
+                    Value = s.CoinSizeId.ToString(),
+                    Text = s.Size.ToString(),
+                });
+
+            return new SelectList(model, "Value", "Text");
+        }
+
         public CoinsController(CoinifyWebContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Coins
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Coin.ToListAsync());
+            return View(await _context.Coin.Include(c => c.Size).ToListAsync());
         }
 
         // GET: Coins/Details/5
@@ -45,6 +60,8 @@ namespace Coinify.Web.Controllers
         // GET: Coins/Create
         public IActionResult Create()
         {
+            ViewBag.CoinSizes = GetCoinSizes().Result;
+
             return View();
         }
 
@@ -53,13 +70,26 @@ namespace Coinify.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CoinId,Value")] Coin coin)
+        public async Task<IActionResult> Create([Bind("CoinId,Value,Size")] CoinViewModel coin)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(coin);
+                var size = _context.CoinSize.Find(coin.Size);
+                var model = new Coin()
+                {
+                    CoinId = coin.CoinId,
+                    Value = coin.Value,
+                    Size = size
+                };
+
+                _context.Add(model);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Coin created sucessfully";
                 return RedirectToAction("Index");
+            }
+            else
+            {
+                ViewBag.CoinSizes = await GetCoinSizes();
             }
             return View(coin);
         }
@@ -77,7 +107,9 @@ namespace Coinify.Web.Controllers
             {
                 return NotFound();
             }
-            return View(coin);
+            ViewBag.CoinSizes = await GetCoinSizes();
+
+            return View(CoinViewModel.FromModel(coin));
         }
 
         // POST: Coins/Edit/5
@@ -85,7 +117,7 @@ namespace Coinify.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CoinId,Value")] Coin coin)
+        public async Task<IActionResult> Edit(int id, [Bind("CoinId,Value,Size")] CoinViewModel coin)
         {
             if (id != coin.CoinId)
             {
@@ -96,7 +128,13 @@ namespace Coinify.Web.Controllers
             {
                 try
                 {
-                    _context.Update(coin);
+                    var model = _context.Coin.Find(coin.CoinId);
+                    var size = _context.CoinSize.Find(coin.Size);
+
+                    model.Value = coin.Value;
+                    model.Size = size;
+
+                    _context.Update(model);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -110,8 +148,10 @@ namespace Coinify.Web.Controllers
                         throw;
                     }
                 }
+                TempData["SuccessMessage"] = "Coin edited sucessfully";
                 return RedirectToAction("Index");
             }
+
             return View(coin);
         }
 
@@ -141,6 +181,7 @@ namespace Coinify.Web.Controllers
             var coin = await _context.Coin.SingleOrDefaultAsync(m => m.CoinId == id);
             _context.Coin.Remove(coin);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Coin deleted sucessfully";
             return RedirectToAction("Index");
         }
 

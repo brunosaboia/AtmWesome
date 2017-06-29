@@ -4,17 +4,22 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>List Coins</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New Coin</a>
 </p>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <p class="alert alert-success" id="successMessage">@TempData["SuccessMessage"]</p>
+}
+
 <table class="table">
     <thead>
         <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Value)
-                </th>
+            <th>@Html.DisplayNameFor(model => model.Value)</th>
+            <th>@Html.DisplayNameFor(model => model.Size.Size)</th>
             <th></th>
         </tr>
     </thead>
@@ -23,6 +28,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Value)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Size.Size)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.CoinId">Edit</a> |
