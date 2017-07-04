@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Coinify.Web.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Coinify.Web.Models
 {
@@ -21,5 +16,7 @@ namespace Coinify.Web.Models
         public DbSet<Coinify.Web.Models.User> User { get; set; }
 
         public DbSet<Coinify.Web.Models.CoinSize> CoinSize { get; set; }
+
+        public DbSet<Coinify.Web.Models.AutomatedTellerMachine> AutomatedTellerMachine { get; set; }
     }
 }

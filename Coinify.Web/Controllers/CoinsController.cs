@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,6 +47,7 @@ namespace Coinify.Web.Controllers
             }
 
             var coin = await _context.Coin
+                .Include(c => c.Size)
                 .SingleOrDefaultAsync(m => m.CoinId == id);
             if (coin == null)
             {
@@ -164,6 +164,7 @@ namespace Coinify.Web.Controllers
             }
 
             var coin = await _context.Coin
+                .Include(c => c.Size)
                 .SingleOrDefaultAsync(m => m.CoinId == id);
             if (coin == null)
             {

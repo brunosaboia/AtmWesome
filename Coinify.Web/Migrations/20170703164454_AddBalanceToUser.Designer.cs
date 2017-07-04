@@ -8,32 +8,14 @@ using Coinify.Web.Models;
 namespace Coinify.Web.Migrations
 {
     [DbContext(typeof(CoinifyWebContext))]
-    partial class CoinifyWebContextModelSnapshot : ModelSnapshot
+    [Migration("20170703164454_AddBalanceToUser")]
+    partial class AddBalanceToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Coinify.Web.Models.AutomatedTellerMachine", b =>
-                {
-                    b.Property<int>("AutomatedTellerMachineId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Alias")
-                        .IsRequired();
-
-                    b.Property<bool>("HasNoteDispenser");
-
-                    b.Property<string>("JsonCoinDictionary");
-
-                    b.Property<string>("JsonNoteDictionary");
-
-                    b.HasKey("AutomatedTellerMachineId");
-
-                    b.ToTable("AutomatedTellerMachine");
-                });
 
             modelBuilder.Entity("Coinify.Web.Models.Coin", b =>
                 {
@@ -56,13 +38,9 @@ namespace Coinify.Web.Migrations
                     b.Property<int>("CoinSizeId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("AutomatedTellerMachineId");
-
                     b.Property<int>("Size");
 
                     b.HasKey("CoinSizeId");
-
-                    b.HasIndex("AutomatedTellerMachineId");
 
                     b.ToTable("CoinSize");
                 });
@@ -100,13 +78,6 @@ namespace Coinify.Web.Migrations
                         .WithMany()
                         .HasForeignKey("SizeCoinSizeId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Coinify.Web.Models.CoinSize", b =>
-                {
-                    b.HasOne("Coinify.Web.Models.AutomatedTellerMachine")
-                        .WithMany("CoinDispensers")
-                        .HasForeignKey("AutomatedTellerMachineId");
                 });
         }
     }

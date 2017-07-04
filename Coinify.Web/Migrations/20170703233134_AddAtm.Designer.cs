@@ -8,9 +8,10 @@ using Coinify.Web.Models;
 namespace Coinify.Web.Migrations
 {
     [DbContext(typeof(CoinifyWebContext))]
-    partial class CoinifyWebContextModelSnapshot : ModelSnapshot
+    [Migration("20170703233134_AddAtm")]
+    partial class AddAtm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")

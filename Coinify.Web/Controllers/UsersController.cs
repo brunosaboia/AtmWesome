@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Coinify.Web.Models;
 
@@ -53,7 +50,7 @@ namespace Coinify.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Name")] User user)
+        public async Task<IActionResult> Create([Bind("UserId,Name,Balance")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +82,7 @@ namespace Coinify.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Name")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Name,Balance")] User user)
         {
             if (id != user.UserId)
             {
