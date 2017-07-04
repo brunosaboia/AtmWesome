@@ -18,9 +18,6 @@
                 <th>
                     @Html.DisplayNameFor(model => model.HasNoteDispenser)
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AvaiableAmount)
-                </th>
             <th></th>
         </tr>
     </thead>
@@ -32,9 +29,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.HasNoteDispenser)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AvaiableAmount)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.AutomatedTellerMachineId">Edit</a> |

@@ -1,10 +1,14 @@
-@model Coinify.Web.Models.AutomatedTellerMachine
+@model Coinify.Web.Models.ViewModels.AutomatedTellerMachineViewModel
 
 @{
     ViewData["Title"] = "Create";
+    Dictionary<Coinify.Web.Models.Coin, int> CoinDictionary = ViewBag.CoinDictionary;
+    Dictionary<Coinify.Web.Models.Note, int> NoteDictionary = ViewBag.NoteDictionary;
+    Dictionary<Coinify.Web.Models.CoinSize, bool> CoinDispenserDictionary = ViewBag.CoinDispenserDictionary;
+
 }
 
-<h2>Create</h2>
+<h2>Create ATM</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
@@ -21,16 +25,42 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <div class="checkbox">
-                    <input asp-for="HasNoteDispenser" />
+                    <input asp-for="HasNoteDispenser"/>
                     <label asp-for="HasNoteDispenser"></label>
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="AvaiableAmount" class="col-md-2 control-label"></label>
+            <label asp-for="CoinDictionary" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="AvaiableAmount" class="form-control" />
-                <span asp-validation-for="AvaiableAmount" class="text-danger"></span>
+                @foreach(var kvp in CoinDictionary)
+                { 
+                    @Html.Label($"Amount of coins (Specs -> Value: {kvp.Key.Value} Size: {kvp.Key.Size.ToString()})")
+                    @Html.TextBoxFor(model => model.CoinDictionary[kvp.Key.CoinId], new { @placeholder = "Amount", @class = "form-control" })
+                }
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label asp-for="NoteDictionary" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @foreach (var kvp in NoteDictionary)
+                {
+                    @Html.Label($"Amount of notes (Specs -> Value: {kvp.Key.Value})")
+                    @Html.TextBoxFor(model => model.NoteDictionary[kvp.Key.NoteId], new { @placeholder = "Amount", @class = "form-control" })
+                }
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label asp-for="CoinDispensersDictionary" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @foreach (var kvp in CoinDispenserDictionary)
+                {
+                    @Html.Label($"Enable Coin dispenser of size {kvp.Key.Size}?")
+                    <span>&nbsp;</span>
+                    @Html.CheckBoxFor(model => model.CoinDispensersDictionary[kvp.Key.CoinSizeId])
+                }
             </div>
         </div>
         <div class="form-group">

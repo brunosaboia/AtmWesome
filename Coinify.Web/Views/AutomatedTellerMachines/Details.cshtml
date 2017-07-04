@@ -23,12 +23,66 @@
             @Html.DisplayFor(model => model.HasNoteDispenser)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AvaiableAmount)
+            @Html.DisplayNameFor(model => model.AvaiableBalance)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AvaiableAmount)
+           @($"$ {Model.AvaiableBalance}")
         </dd>
     </dl>
+    <hr />
+    <h4>Avaiable Coins</h4>
+    <table class="table table-bordered">
+        <tr>
+            <th>Coin Details</th>
+            <th>Amount</th>
+            <th>Total Value</th>
+        </tr>
+        @foreach (var kvp in Model.CoinDictionary)
+        {
+            <tr>
+                <td>
+                    @($"Size {kvp.Key.Size}; Value ${kvp.Key.Value}")
+                </td>
+                <td>
+                    @(kvp.Value.ToString())
+                </td>
+                <td>
+                    @($"$ {kvp.Key.Value * kvp.Value}")
+                </td>
+            </tr>
+        }
+    </table>
+    <strong>
+        @Html.DisplayNameFor(model => model.AvaiableCoinBalance): $
+        @Html.DisplayFor(model => model.AvaiableCoinBalance)
+    </strong>
+    <hr />
+    <h4>Avaiable Notes</h4>
+    <table class="table table-bordered">
+        <tr>
+            <th>Note Details</th>
+            <th>Amount</th>
+            <th>Total Value</th>
+        </tr>
+        @foreach (var kvp in Model.NoteDictionary)
+        {
+            <tr>
+                <td>
+                    @($"Value ${kvp.Key.Value}")
+                </td>
+                <td>
+                    @(kvp.Value.ToString())
+                </td>
+                <td>
+                    @($"$ {kvp.Key.Value * kvp.Value}")
+                </td>
+            </tr>
+        }
+    </table>
+    <strong>
+        @Html.DisplayNameFor(model => model.AvaiableNoteBalance): $
+        @Html.DisplayFor(model => model.AvaiableNoteBalance)
+    </strong>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.AutomatedTellerMachineId">Edit</a> |
