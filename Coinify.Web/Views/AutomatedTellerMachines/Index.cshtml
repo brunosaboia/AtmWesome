@@ -2,9 +2,27 @@
 
 @{
     ViewData["Title"] = "Index";
+    var warnings = TempData["WarningMessage"] as string [] ?? new string[0];
 }
 
 <h2>Index</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <p class="alert alert-success" id="successMessage">@TempData["SuccessMessage"]</p>
+}
+
+
+@if (warnings.Length > 0)
+{
+    @foreach (var message in warnings)
+    {
+    <p class="alert alert-warning" id="successMessage">
+        @message
+    </p>
+    }
+}
+
 
 <p>
     <a asp-action="Create">Create New</a>

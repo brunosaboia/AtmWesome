@@ -60,28 +60,34 @@ namespace Coinify.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var warnings = new List<string>();
                 var model = automatedTellerMachine.ToModel(_context);
 
                 // We should not add any notes or coins if the ATM has not a dispenser
                 // to spit them out
-                if(!model.HasNoteDispenser)
+                if (!model.HasNoteDispenser)
                 {
                     model.NoteDictionary = new Dictionary<Note, int>();
+                    warnings.Add("Note dispenser not present, values cleared");
                 }
 
-                foreach(var kvp in model.CoinDictionary.ToList())
+                foreach (var kvp in model.CoinDictionary.ToList())
                 {
-                    if(model.CoinDispensersDictionary.ContainsKey(kvp.Key.Size))
+                    if (model.CoinDispensersDictionary.ContainsKey(kvp.Key.Size))
                     {
-                        if(!model.CoinDispensersDictionary[kvp.Key.Size])
+                        if (!model.CoinDispensersDictionary[kvp.Key.Size])
                         {
                             model.CoinDictionary[kvp.Key] = 0;
+                            warnings.Add($"Coin dispenser of size {kvp.Key.Size} not present, " +
+                                $"not adding coin of value {kvp.Key.Value}");
                         }
                     }
                 }
 
                 _context.Add(model);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"ATM added succesfully! Alias: {model.Alias}";
+                TempData["WarningMessage"] = warnings;
                 return RedirectToAction("Index");
             }
             return View(automatedTellerMachine);

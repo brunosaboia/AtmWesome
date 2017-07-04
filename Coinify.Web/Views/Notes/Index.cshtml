@@ -9,6 +9,12 @@
 <p>
     <a asp-action="Create">Create New Note</a>
 </p>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <p class="alert alert-success" id="successMessage">@TempData["SuccessMessage"]</p>
+}
+
 <table class="table">
     <thead>
         <tr>
