@@ -24,15 +24,15 @@ namespace Coinify.Web.Migrations
                     b.Property<string>("Alias")
                         .IsRequired();
 
-                    b.Property<bool>("HasNoteDispenser");
+                    b.Property<int>("CurrencyDictionaryId");
 
-                    b.Property<string>("JsonCoinDictionary");
+                    b.Property<bool>("HasNoteDispenser");
 
                     b.Property<string>("JsonCoinDispensersDictionary");
 
-                    b.Property<string>("JsonNoteDictionary");
-
                     b.HasKey("AutomatedTellerMachineId");
+
+                    b.HasIndex("CurrencyDictionaryId");
 
                     b.ToTable("AutomatedTellerMachine");
                 });
@@ -65,6 +65,20 @@ namespace Coinify.Web.Migrations
                     b.ToTable("CoinSize");
                 });
 
+            modelBuilder.Entity("Coinify.Web.Models.CurrencyDictionary", b =>
+                {
+                    b.Property<int>("CurrencyDictionaryId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("JsonCoinDictionary");
+
+                    b.Property<string>("JsonNoteDictionary");
+
+                    b.HasKey("CurrencyDictionaryId");
+
+                    b.ToTable("CurrencyDictionary");
+                });
+
             modelBuilder.Entity("Coinify.Web.Models.Note", b =>
                 {
                     b.Property<int>("NoteId")
@@ -92,11 +106,61 @@ namespace Coinify.Web.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("Coinify.Web.Models.Withdraw", b =>
+                {
+                    b.Property<int>("WithdrawId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AutomatedTellerMachineId");
+
+                    b.Property<int>("CurrencyDictionaryId");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<DateTime>("WithdrawDate");
+
+                    b.HasKey("WithdrawId");
+
+                    b.HasIndex("AutomatedTellerMachineId");
+
+                    b.HasIndex("CurrencyDictionaryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Withdraw");
+                });
+
+            modelBuilder.Entity("Coinify.Web.Models.AutomatedTellerMachine", b =>
+                {
+                    b.HasOne("Coinify.Web.Models.CurrencyDictionary", "CurrencyDictionary")
+                        .WithMany()
+                        .HasForeignKey("CurrencyDictionaryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Coinify.Web.Models.Coin", b =>
                 {
                     b.HasOne("Coinify.Web.Models.CoinSize", "Size")
                         .WithMany()
                         .HasForeignKey("SizeCoinSizeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Coinify.Web.Models.Withdraw", b =>
+                {
+                    b.HasOne("Coinify.Web.Models.AutomatedTellerMachine", "AutomatedTellerMachine")
+                        .WithMany()
+                        .HasForeignKey("AutomatedTellerMachineId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Coinify.Web.Models.CurrencyDictionary", "CurrencyDictionary")
+                        .WithMany()
+                        .HasForeignKey("CurrencyDictionaryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Coinify.Web.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
         }

@@ -23,10 +23,10 @@
             @Html.DisplayFor(model => model.HasNoteDispenser)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AvaiableBalance)
+            @Html.DisplayNameFor(model => model.CurrencyDictionary.Balance)
         </dt>
         <dd>
-           @($"$ {Model.AvaiableBalance}")
+           @($"$ {Model.CurrencyDictionary.Balance}")
         </dd>
     </dl>
     <hr />
@@ -37,7 +37,7 @@
             <th>Amount</th>
             <th>Total Value</th>
         </tr>
-        @foreach (var kvp in Model.CoinDictionary)
+        @foreach (var kvp in Model.CurrencyDictionary.CoinDictionary)
         {
             <tr>
                 <td>
@@ -53,8 +53,8 @@
         }
     </table>
     <strong>
-        @Html.DisplayNameFor(model => model.AvaiableCoinBalance): $
-        @Html.DisplayFor(model => model.AvaiableCoinBalance)
+        @Html.DisplayNameFor(model => model.CurrencyDictionary.CoinBalance): $
+        @Html.DisplayFor(model => model.CurrencyDictionary.CoinBalance)
     </strong>
     <hr />
     <h4>Avaiable Notes</h4>
@@ -64,7 +64,7 @@
             <th>Amount</th>
             <th>Total Value</th>
         </tr>
-        @foreach (var kvp in Model.NoteDictionary)
+        @foreach (var kvp in Model.CurrencyDictionary.NoteDictionary)
         {
             <tr>
                 <td>
@@ -80,8 +80,8 @@
         }
     </table>
     <strong>
-        @Html.DisplayNameFor(model => model.AvaiableNoteBalance): $
-        @Html.DisplayFor(model => model.AvaiableNoteBalance)
+        @Html.DisplayNameFor(model => model.CurrencyDictionary.NoteBalance): $
+        @Html.DisplayFor(model => model.CurrencyDictionary.NoteBalance)
     </strong>
 </div>
 <div>

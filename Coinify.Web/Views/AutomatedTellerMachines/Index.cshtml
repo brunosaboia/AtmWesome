@@ -2,10 +2,10 @@
 
 @{
     ViewData["Title"] = "Index";
-    var warnings = TempData["WarningMessage"] as string [] ?? new string[0];
+    var warnings = TempData["WarningMessage"] as string[] ?? new string[0];
 }
 
-<h2>Index</h2>
+<h2>List ATMs</h2>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -17,9 +17,9 @@
 {
     @foreach (var message in warnings)
     {
-    <p class="alert alert-warning" id="successMessage">
-        @message
-    </p>
+        <p class="alert alert-warning" id="successMessage">
+            @message
+        </p>
     }
 }
 
@@ -30,30 +30,48 @@
 <table class="table">
     <thead>
         <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Alias)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.HasNoteDispenser)
-                </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alias)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HasNoteDispenser)
+            </th>
+            <th>
+                Avaiable coin dispensers
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrencyDictionary.Balance)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Alias)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HasNoteDispenser)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AutomatedTellerMachineId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AutomatedTellerMachineId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AutomatedTellerMachineId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Alias)
+                </td>
+                <td>
+                    @(item.HasNoteDispenser ? "Yes" : "No")
+                </td>
+                <td>
+                    @(string.Join(", ", item
+                        .CoinDispensersDictionary
+                        .Where(kvp => kvp.Value == true)
+                        .Select(kvp => $"{kvp.Key.Size.ToString()} mm")
+                        .ToArray())
+                    )
+                </td>
+                <td>
+                    $ @Html.DisplayFor(modelItem => item.CurrencyDictionary.Balance)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.AutomatedTellerMachineId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.AutomatedTellerMachineId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.AutomatedTellerMachineId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

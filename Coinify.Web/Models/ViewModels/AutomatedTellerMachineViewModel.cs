@@ -23,8 +23,8 @@ namespace Coinify.Web.Models.ViewModels
             {
                 AutomatedTellerMachineId = model.AutomatedTellerMachineId,
                 Alias = model.Alias,
-                CoinDictionary = model.CoinDictionary.ToDictionary(k => k.Key.CoinId, v => v.Value),
-                NoteDictionary = model.NoteDictionary.ToDictionary(k => k.Key.NoteId, v => v.Value),
+                CoinDictionary = model.CurrencyDictionary.CoinDictionary.ToDictionary(k => k.Key.CoinId, v => v.Value),
+                NoteDictionary = model.CurrencyDictionary.NoteDictionary.ToDictionary(k => k.Key.NoteId, v => v.Value),
                 HasNoteDispenser = model.HasNoteDispenser,
                 CoinDispensersDictionary = model
                     .CoinDispensersDictionary
@@ -38,8 +38,11 @@ namespace Coinify.Web.Models.ViewModels
             {
                 AutomatedTellerMachineId = AutomatedTellerMachineId,
                 Alias = Alias,
-                CoinDictionary = CoinDictionary.ToDictionary(k => context.Coin.Find(k.Key), v => v.Value),
-                NoteDictionary = NoteDictionary.ToDictionary(k => context.Note.Find(k.Key), v => v.Value),
+                CurrencyDictionary = new CurrencyDictionary()
+                {
+                    CoinDictionary = CoinDictionary.ToDictionary(k => context.Coin.Find(k.Key), v => v.Value),
+                    NoteDictionary = NoteDictionary.ToDictionary(k => context.Note.Find(k.Key), v => v.Value),
+                },
                 HasNoteDispenser = HasNoteDispenser,
                 CoinDispensersDictionary = CoinDispensersDictionary
                     .ToDictionary(k => context.CoinSize.Find(k.Key), v => v.Value)

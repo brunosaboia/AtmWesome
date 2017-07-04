@@ -20,7 +20,11 @@ namespace Coinify.Web.Controllers
         // GET: AutomatedTellerMachines
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AutomatedTellerMachine.ToListAsync());
+            var model = await _context.AutomatedTellerMachine
+                .Include(atm => atm.CurrencyDictionary)
+                .ToListAsync();
+
+            return View(model);
         }
 
         // GET: AutomatedTellerMachines/Details/5
@@ -32,6 +36,7 @@ namespace Coinify.Web.Controllers
             }
 
             var automatedTellerMachine = await _context.AutomatedTellerMachine
+                .Include(atm => atm.CurrencyDictionary)
                 .SingleOrDefaultAsync(m => m.AutomatedTellerMachineId == id);
             if (automatedTellerMachine == null)
             {
@@ -67,17 +72,17 @@ namespace Coinify.Web.Controllers
                 // to spit them out
                 if (!model.HasNoteDispenser)
                 {
-                    model.NoteDictionary = new Dictionary<Note, int>();
+                    model.CurrencyDictionary.NoteDictionary = new Dictionary<Note, int>();
                     warnings.Add("Note dispenser not present, values cleared");
                 }
 
-                foreach (var kvp in model.CoinDictionary.ToList())
+                foreach (var kvp in model.CurrencyDictionary.CoinDictionary.ToList())
                 {
                     if (model.CoinDispensersDictionary.ContainsKey(kvp.Key.Size))
                     {
                         if (!model.CoinDispensersDictionary[kvp.Key.Size])
                         {
-                            model.CoinDictionary[kvp.Key] = 0;
+                            model.CurrencyDictionary.CoinDictionary[kvp.Key] = 0;
                             warnings.Add($"Coin dispenser of size {kvp.Key.Size} not present, " +
                                 $"not adding coin of value {kvp.Key.Value}");
                         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Coinify.Web.Models;
 
 namespace Coinify.Web.Models
 {
@@ -18,5 +19,8 @@ namespace Coinify.Web.Models
         public DbSet<Coinify.Web.Models.CoinSize> CoinSize { get; set; }
 
         public DbSet<Coinify.Web.Models.AutomatedTellerMachine> AutomatedTellerMachine { get; set; }
+        public DbSet<Coinify.Web.Models.CurrencyDictionary> CurrencyDictionary { get; set; }
+        public DbSet<Coinify.Web.Models.Withdraw> Withdraw { get; set; }
+
     }
 }
