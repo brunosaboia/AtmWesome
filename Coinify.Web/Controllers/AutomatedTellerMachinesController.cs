@@ -76,16 +76,16 @@ namespace Coinify.Web.Controllers
                     warnings.Add("Note dispenser not present, values cleared");
                 }
 
-                foreach (var kvp in model.CurrencyDictionary.CoinDictionary.ToList())
+                // We should not add coins if they're bigger than the biggest dispenser,
+                // otherwise how could they get out?
+                var biggestDispenserSize = model.CoinDispensersDictionary.Max(kvp => kvp.Key.Size);
+
+                foreach(var coin in model.CurrencyDictionary.CoinDictionary.Keys)
                 {
-                    if (model.CoinDispensersDictionary.ContainsKey(kvp.Key.Size))
+                    if(coin.Size.Size > biggestDispenserSize)
                     {
-                        if (!model.CoinDispensersDictionary[kvp.Key.Size])
-                        {
-                            model.CurrencyDictionary.CoinDictionary[kvp.Key] = 0;
-                            warnings.Add($"Coin dispenser of size {kvp.Key.Size} not present, " +
-                                $"not adding coin of value {kvp.Key.Value}");
-                        }
+                        model.CurrencyDictionary.CoinDictionary[coin] = 0;
+                        warnings.Add($"Coin of size {coin.Size.Size} too big, values cleared");                        
                     }
                 }
 

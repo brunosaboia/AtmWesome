@@ -1,7 +1,7 @@
-@model Coinify.Web.Models.Withdraw
+@model Coinify.Web.Models.ViewModels.WithdrawViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Withdraw Operation";
 }
 
 <h2>Create</h2>
@@ -12,10 +12,26 @@
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="WithdrawDate" class="col-md-2 control-label"></label>
+            <label asp-for="Amount" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="WithdrawDate" class="form-control" />
-                <span asp-validation-for="WithdrawDate" class="text-danger"></span>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="UserId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="UserId" asp-items="ViewBag.Users" class="form-control"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+                <a asp-controller="Users" asp-action="Create">Create New User</a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AtmId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="AtmId" asp-items="ViewBag.Atms" class="form-control"></select>
+                <span asp-validation-for="AtmId" class="text-danger"></span>
+                <a asp-controller="AutomatedTellerMachines" asp-action="Create">Create New ATM</a>
             </div>
         </div>
         <div class="form-group">

@@ -13,6 +13,10 @@ namespace Coinify.Web.Controllers
     {
         private readonly CoinifyWebContext _context;
 
+        public CoinsController(CoinifyWebContext context)
+        {
+            _context = context;
+        }
         private async Task<IEnumerable<SelectListItem>> GetCoinSizes()
         {
             var sizes = await _context.CoinSize.ToListAsync();
@@ -25,11 +29,6 @@ namespace Coinify.Web.Controllers
                 });
 
             return new SelectList(model, "Value", "Text");
-        }
-
-        public CoinsController(CoinifyWebContext context)
-        {
-            _context = context;
         }
 
         // GET: Coins
