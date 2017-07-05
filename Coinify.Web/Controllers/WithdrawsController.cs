@@ -102,7 +102,7 @@ namespace Coinify.Web.Controllers
             return validMoney;
         }
 
-        private CurrencyDictionary WithdrawFromAtm(User user, AutomatedTellerMachine atm, int amount)
+        private CurrencyDictionary WithdrawFromAtm(User user, AutomatedTellerMachine atm, int amount, bool saveChangesToDatabase = true)
         {
             var curDict = atm.CurrencyDictionary;
 
@@ -138,6 +138,8 @@ namespace Coinify.Web.Controllers
                         if (ret.NoteDictionary.ContainsKey(note))
                             ret.NoteDictionary[note]++;
                         else ret.NoteDictionary[note] = 1;
+
+                        curDict.NoteDictionary[note]--;
                     }
                     else if (kvp.Key is Coin)
                     {
@@ -146,6 +148,9 @@ namespace Coinify.Web.Controllers
                         if (ret.CoinDictionary.ContainsKey(coin))
                             ret.CoinDictionary[coin]++;
                         else ret.CoinDictionary[coin] = 1;
+
+                        curDict.CoinDictionary[coin]--;
+
                     }
                     else break;
                 }
@@ -156,12 +161,13 @@ namespace Coinify.Web.Controllers
                     InsufficientChangeException($"There is no change in ATM {atm.AutomatedTellerMachineId} to withdraw ${amount}");
             }
 
-            atm.CurrencyDictionary = curDict;
+            if (saveChangesToDatabase)
+            {
+                _context.Update(user);
+                _context.Update(atm);
 
-            _context.Update(user);
-            _context.Update(atm);
-
-            _context.SaveChanges();
+                _context.SaveChanges();
+            }
 
             return ret;
         }
@@ -217,14 +223,41 @@ namespace Coinify.Web.Controllers
                     return View(withdraw);
                 }
 
-
                 model.WithdrawDate = DateTime.Now;
 
                 _context.Add(model);
                 await _context.SaveChangesAsync();
+
+                (TempData["SuccessMessage"], TempData["InfoMessages"]) = BuildWithdrawMessage(model);
+
                 return RedirectToAction("Index");
             }
             return View(withdraw);
+        }
+
+        private (string successMessage, string [] infoMessages) BuildWithdrawMessage(Withdraw withdraw)
+        {
+            var genericInfo = $"Success! {withdraw.User.Name} has withdrawn {withdraw.CurrencyDictionary.Balance} from ATM {withdraw.AutomatedTellerMachine.Alias}. Spend it wisely and have fun!";
+            var noteInfo = withdraw
+                .CurrencyDictionary
+                .NoteDictionary
+                .Select(kvp => $"{kvp.Value} notes of ${kvp.Key.Value}")
+                .ToArray();
+
+            var coinInfo = withdraw
+                .CurrencyDictionary
+                .CoinDictionary
+                .Select(kvp => $"{kvp.Value} coins of ${kvp.Key.Value} (size: {kvp.Key.Size.ToString()})")
+                .ToArray();
+
+            var detailedInfo = new string[]
+            {
+                $"The money was given in the following fashion: ",
+                $"Notes: {string.Join(", ", (noteInfo.Length > 0 ? noteInfo : new[] { "No notes were given" }))}",
+                $"Coins: {string.Join(", ", (coinInfo.Length > 0 ? coinInfo : new[] { "No coins were given" }))}"
+            };
+
+            return (genericInfo, detailedInfo);
         }
     
         private bool WithdrawExists(int id)

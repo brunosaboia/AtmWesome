@@ -7,8 +7,24 @@
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Withdraw Operation</a>
 </p>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <p class="alert alert-success" id="successMessage">@TempData["SuccessMessage"]</p>
+}
+
+@if (TempData["InfoMessages"] != null)
+{
+    <p class="alert alert-info" id="successMessage">
+        @foreach(var message in TempData["InfoMessages"] as string [])
+        {
+           @message<br>
+        }
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
