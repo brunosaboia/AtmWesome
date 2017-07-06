@@ -56,6 +56,22 @@ namespace Coinify.Web.Models
         public Dictionary<Note, int> NoteDictionary { get; set; }
 
         [NotMapped]
+        public Dictionary<Money, int> MoneyDictionary
+        {
+            get
+            {
+                var coinCast = CoinDictionary
+                    .Select(kvp => new KeyValuePair<Money, int>(kvp.Key, kvp.Value));
+
+                var noteCast = NoteDictionary
+                    .Select(kvp => new KeyValuePair<Money, int>(kvp.Key, kvp.Value));
+
+                return coinCast.Union(noteCast)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        [NotMapped]
         public int Balance => CoinBalance + NoteBalance;
 
         [NotMapped]

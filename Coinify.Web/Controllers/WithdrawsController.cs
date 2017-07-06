@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Coinify.Web.Models;
 using Coinify.Web.Models.ViewModels;
 using Coinify.Web.Exceptions;
+using Coinify.Web.Helpers;
 
 namespace Coinify.Web.Controllers
 {
@@ -18,6 +19,93 @@ namespace Coinify.Web.Controllers
         public WithdrawsController(CoinifyWebContext context)
         {
             _context = context;
+        }
+
+        public IActionResult Reports()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> ReportLeastUsedMoney(int? id = null)
+        {
+            var tmpDict = new SortedDictionary<string, SortedDictionary<Money, int>>();
+            List<Withdraw> withdrawList;
+
+            if (id == null)
+            {
+                withdrawList = await _context
+                    .Withdraw
+                    .Include(w => w.CurrencyDictionary)
+                    .Include(w => w.AutomatedTellerMachine)
+                    .ToListAsync();
+            }
+            else
+            {
+                withdrawList = await _context
+                    .Withdraw
+                    .Include(w => w.CurrencyDictionary)
+                    .Include(w => w.AutomatedTellerMachine)
+                    .Where(w => w.AutomatedTellerMachine.AutomatedTellerMachineId == id)
+                    .ToListAsync();
+            }
+
+
+            foreach (var withdraw in withdrawList)
+            {
+                var atm = withdraw.AutomatedTellerMachine;
+
+                if (!tmpDict.ContainsKey(atm.Alias))
+                    tmpDict.Add(atm.Alias, new SortedDictionary<Money, int>());
+
+                foreach (var money in withdraw.CurrencyDictionary.MoneyDictionary)
+                {
+                    if (!tmpDict[atm.Alias].ContainsKey(money.Key))
+                    {
+                        tmpDict[atm.Alias].Add(money.Key, money.Value);
+                    }
+                    else
+                    {
+                        tmpDict[atm.Alias][money.Key] += money.Value;
+                    }
+                }
+            }
+
+            var model = tmpDict
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.OrderBy(_ => _.Value).ToList()).ToList();
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> ReportWithdrawByAtm(int id)
+        {
+            var atm = await _context
+                .AutomatedTellerMachine
+                .Include(a => a.CurrencyDictionary)
+                .SingleOrDefaultAsync(a => a.AutomatedTellerMachineId == id);
+
+            ViewBag.Atm = atm.Alias;
+            ViewBag.AtmBalance = atm.CurrencyDictionary.Balance;
+
+            if (atm == null) return NotFound();
+
+            var model = await _context
+                .Withdraw
+                .Include(w => w.User)
+                .Include(w => w.CurrencyDictionary)
+                .Where(w => w.AutomatedTellerMachine.AutomatedTellerMachineId == id)
+                .OrderByDescending(w => w.WithdrawDate)
+                .ToListAsync();
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> ReportWithdrawByAtms()
+        {
+            var atms = await _context
+                .AutomatedTellerMachine
+                .ToListAsync();
+
+            return View(atms);
         }
 
         private async Task<IEnumerable<SelectListItem>> GetUsers()
@@ -51,7 +139,13 @@ namespace Coinify.Web.Controllers
         // GET: Withdraws
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Withdraw.ToListAsync());
+            return View(await _context
+                .Withdraw
+                .Include(w => w.User)
+                .Include(w => w.AutomatedTellerMachine)
+                .Include(w => w.CurrencyDictionary)
+                .OrderByDescending(w => w.WithdrawDate)
+                .ToListAsync());
         }
 
         // GET: Withdraws/Details/5
@@ -81,97 +175,6 @@ namespace Coinify.Web.Controllers
             return View();
         }
 
-        private Dictionary<IMoney, int> GenerateValidMoneyDictionary(CurrencyDictionary dict)
-        {
-            var validNotes = dict
-                .NoteDictionary
-                .Where(kvp => kvp.Value > 0)
-                .Select(kvp => new KeyValuePair<IMoney, int>(kvp.Key, kvp.Value))
-                .OrderByDescending(kvp => kvp.Key.Value);
-
-            var validCoins = dict
-                .CoinDictionary
-                .Where(kvp => kvp.Value > 0)
-                .Select(kvp => new KeyValuePair<IMoney, int>(kvp.Key, kvp.Value))
-                .OrderByDescending(c => c.Key.Value);
-
-            var validMoney = validNotes
-                .Union(validCoins)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-            return validMoney;
-        }
-
-        private CurrencyDictionary WithdrawFromAtm(User user, AutomatedTellerMachine atm, int amount, bool saveChangesToDatabase = true)
-        {
-            var curDict = atm.CurrencyDictionary;
-
-            var ret = new CurrencyDictionary()
-            {
-                CoinDictionary = new Dictionary<Coin, int>(),
-                NoteDictionary = new Dictionary<Note, int>()
-            };
-
-            if (user.Balance - amount < 0)
-            {
-                throw new InsufficentFundsException($"User {user.UserId} has insuficient funds to withdraw ${amount}");
-            }
-
-            user.Balance -= amount;
-
-            var validMoney = GenerateValidMoneyDictionary(curDict);
-
-            foreach (var kvp in validMoney.ToList())
-            {
-                while (validMoney[kvp.Key] != 0)
-                {
-                    if ((amount - kvp.Key.Value) < 0)
-                        break;
-
-                    amount -= kvp.Key.Value;
-                    validMoney[kvp.Key]--;
-
-                    if (kvp.Key is Note)
-                    {
-                        var note = kvp.Key as Note;
-
-                        if (ret.NoteDictionary.ContainsKey(note))
-                            ret.NoteDictionary[note]++;
-                        else ret.NoteDictionary[note] = 1;
-
-                        curDict.NoteDictionary[note]--;
-                    }
-                    else if (kvp.Key is Coin)
-                    {
-                        var coin = kvp.Key as Coin;
-
-                        if (ret.CoinDictionary.ContainsKey(coin))
-                            ret.CoinDictionary[coin]++;
-                        else ret.CoinDictionary[coin] = 1;
-
-                        curDict.CoinDictionary[coin]--;
-
-                    }
-                    else break;
-                }
-            }
-            if(amount > 0)
-            {
-                throw new
-                    InsufficientChangeException($"There is no change in ATM {atm.AutomatedTellerMachineId} to withdraw ${amount}");
-            }
-
-            if (saveChangesToDatabase)
-            {
-                _context.Update(user);
-                _context.Update(atm);
-
-                _context.SaveChanges();
-            }
-
-            return ret;
-        }
-
         // POST: Withdraws/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -188,7 +191,7 @@ namespace Coinify.Web.Controllers
 
                 try
                 {
-                    model.CurrencyDictionary = WithdrawFromAtm(model.User, model.AutomatedTellerMachine, withdraw.Amount);
+                    model.CurrencyDictionary = WithdrawHelper.WithdrawFromAtm(model.User, model.AutomatedTellerMachine, withdraw.Amount, _context);
                 }
                 catch (InsufficentFundsException)
                 {
@@ -238,24 +241,9 @@ namespace Coinify.Web.Controllers
         private (string successMessage, string [] infoMessages) BuildWithdrawMessage(Withdraw withdraw)
         {
             var genericInfo = $"Success! {withdraw.User.Name} has withdrawn {withdraw.CurrencyDictionary.Balance} from ATM {withdraw.AutomatedTellerMachine.Alias}. Spend it wisely and have fun!";
-            var noteInfo = withdraw
-                .CurrencyDictionary
-                .NoteDictionary
-                .Select(kvp => $"{kvp.Value} notes of ${kvp.Key.Value}")
-                .ToArray();
 
-            var coinInfo = withdraw
-                .CurrencyDictionary
-                .CoinDictionary
-                .Select(kvp => $"{kvp.Value} coins of ${kvp.Key.Value} (size: {kvp.Key.Size.ToString()})")
-                .ToArray();
-
-            var detailedInfo = new string[]
-            {
-                $"The money was given in the following fashion: ",
-                $"Notes: {string.Join(", ", (noteInfo.Length > 0 ? noteInfo : new[] { "No notes were given" }))}",
-                $"Coins: {string.Join(", ", (coinInfo.Length > 0 ? coinInfo : new[] { "No coins were given" }))}"
-            };
+            var detailedInfo = ReportHelper
+                .GenerateWithdrawDetails(withdraw.CurrencyDictionary);
 
             return (genericInfo, detailedInfo);
         }

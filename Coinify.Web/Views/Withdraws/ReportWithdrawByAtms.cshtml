@@ -1,0 +1,20 @@
+@model IEnumerable<Coinify.Web.Models.AutomatedTellerMachine>
+
+@{
+    ViewData["Title"] = "Report By ATMs";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h4>Click an ATM below to see its report</h4>
+
+@foreach (var atm in Model)
+{
+    <p>
+        <a asp-action="ReportWithdrawByAtm" asp-route-id="@atm.AutomatedTellerMachineId">
+            @atm.Alias
+        </a>
+    </p>
+}
+
+

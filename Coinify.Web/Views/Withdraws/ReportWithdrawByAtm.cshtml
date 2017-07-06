@@ -1,0 +1,50 @@
+@model List<Coinify.Web.Models.Withdraw>
+@{
+    ViewData["Title"] = "Report By ATM";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h4>Reports for ATM @ViewBag.Atm (Current balance: $@ViewBag.AtmBalance)</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                Withdrawn At
+            </th>
+            <th>
+                User Name
+            </th>
+            <th>
+               Withdrawn Amount
+            </th>
+            <th>
+                Withdraw Details
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var withdraw in Model)
+        {
+            <tr>
+                <td>
+                    @withdraw.WithdrawDate
+                </td>
+                <td>
+                    @withdraw.User.Name
+                </td>
+                <td>
+                    $@withdraw.CurrencyDictionary.Balance
+                </td>
+                <td>
+                    @string.Join(" | ", Coinify.Web.Helpers.ReportHelper.GenerateWithdrawDetails(withdraw.CurrencyDictionary).Skip(1))
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="ReportWithdrawByAtms">Back to List</a>
+

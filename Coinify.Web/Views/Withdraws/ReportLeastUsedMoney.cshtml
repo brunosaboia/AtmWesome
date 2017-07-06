@@ -1,0 +1,48 @@
+@model List<KeyValuePair<string, List<KeyValuePair<Coinify.Web.Models.Money, int>>>>
+@{
+    ViewData["Title"] = "ReportMostUsedMoney";
+}
+
+<h2>Report Least Used Money</h2>
+
+@foreach (var kvp in Model)
+{
+    <div class="row">
+        <p>Data for ATM @kvp.Key</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        Money info
+                    </th>
+
+                    <th>
+                        Times withdrawn
+                    </th>
+                    <th>
+                        Total value withdrawn
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var data in kvp.Value)
+                {
+                    <tr>
+                        <td>
+                            @Coinify.Web.Helpers.ReportHelper.PrintFormattedMoney(data.Key)
+                        </td>
+                        <td>
+                            @data.Value.ToString()
+                        </td>
+                        <td>
+                            $@(data.Key.Value * data.Value)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    <hr />
+}
+

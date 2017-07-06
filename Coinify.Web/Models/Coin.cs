@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Coinify.Web.Models
 {
-    public class Coin : IMoney
+    public class Coin : Money
     {
         public int CoinId { get; set; }
         [Required]
@@ -10,6 +11,9 @@ namespace Coinify.Web.Models
         public CoinSize Size { get; set; }
         [Required]
         [Display(Name = "Coin Value")]
-        public int Value { get; set; }
+        public override int Value { get; set; }
+
+        [NotMapped]
+        public override int MoneyId => CoinId;
     }
 }
