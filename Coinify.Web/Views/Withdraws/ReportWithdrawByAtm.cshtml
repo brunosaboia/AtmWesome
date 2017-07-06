@@ -7,6 +7,8 @@
 
 <h4>Reports for ATM @ViewBag.Atm (Current balance: $@ViewBag.AtmBalance)</h4>
 
+<a asp-action="ReportLeastUsedMoney" asp-route-id="@ViewBag.AtmId">Least Used Money Report</a>
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -38,7 +40,10 @@
                     $@withdraw.CurrencyDictionary.Balance
                 </td>
                 <td>
-                    @string.Join(" | ", Coinify.Web.Helpers.ReportHelper.GenerateWithdrawDetails(withdraw.CurrencyDictionary).Skip(1))
+                    @foreach(var info in Coinify.Web.Helpers.ReportHelper.GenerateWithdrawDetails(withdraw.CurrencyDictionary).Skip(1))
+                    {
+                        <p>@info</p>
+                    }
                 </td>
 
             </tr>

@@ -28,50 +28,7 @@ namespace Coinify.Web.Controllers
 
         public async Task<IActionResult> ReportLeastUsedMoney(int? id = null)
         {
-            var tmpDict = new SortedDictionary<string, SortedDictionary<Money, int>>();
-            List<Withdraw> withdrawList;
-
-            if (id == null)
-            {
-                withdrawList = await _context
-                    .Withdraw
-                    .Include(w => w.CurrencyDictionary)
-                    .Include(w => w.AutomatedTellerMachine)
-                    .ToListAsync();
-            }
-            else
-            {
-                withdrawList = await _context
-                    .Withdraw
-                    .Include(w => w.CurrencyDictionary)
-                    .Include(w => w.AutomatedTellerMachine)
-                    .Where(w => w.AutomatedTellerMachine.AutomatedTellerMachineId == id)
-                    .ToListAsync();
-            }
-
-
-            foreach (var withdraw in withdrawList)
-            {
-                var atm = withdraw.AutomatedTellerMachine;
-
-                if (!tmpDict.ContainsKey(atm.Alias))
-                    tmpDict.Add(atm.Alias, new SortedDictionary<Money, int>());
-
-                foreach (var money in withdraw.CurrencyDictionary.MoneyDictionary)
-                {
-                    if (!tmpDict[atm.Alias].ContainsKey(money.Key))
-                    {
-                        tmpDict[atm.Alias].Add(money.Key, money.Value);
-                    }
-                    else
-                    {
-                        tmpDict[atm.Alias][money.Key] += money.Value;
-                    }
-                }
-            }
-
-            var model = tmpDict
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.OrderBy(_ => _.Value).ToList()).ToList();
+            var model = await ReportHelper.GenerateMoneyReport(_context, id);
 
             return View(model);
         }
@@ -85,6 +42,7 @@ namespace Coinify.Web.Controllers
 
             ViewBag.Atm = atm.Alias;
             ViewBag.AtmBalance = atm.CurrencyDictionary.Balance;
+            ViewBag.AtmId = atm.AutomatedTellerMachineId;
 
             if (atm == null) return NotFound();
 

@@ -1,14 +1,15 @@
-@model List<KeyValuePair<string, List<KeyValuePair<Coinify.Web.Models.Money, int>>>>
+@model IEnumerable<Coinify.Web.Models.ViewModels.ReportLeastUsedMoneyViewModel>
 @{
     ViewData["Title"] = "ReportMostUsedMoney";
 }
 
 <h2>Report Least Used Money</h2>
 
-@foreach (var kvp in Model)
+@foreach (var item in Model)
 {
-    <div class="row">
-        <p>Data for ATM @kvp.Key</p>
+    <div>
+        <p>Data for ATM @item.AtmAlias</p>
+        <p><a asp-action="ReportWithdrawByAtm" asp-route-id="@item.AtmId">Withdraw Reports</a></p>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -25,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach(var data in kvp.Value)
+                @foreach(var data in item.Report)
                 {
                     <tr>
                         <td>
