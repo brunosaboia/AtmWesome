@@ -198,7 +198,7 @@ namespace Coinify.Web.Controllers
 
         private (string successMessage, string [] infoMessages) BuildWithdrawMessage(Withdraw withdraw)
         {
-            var genericInfo = $"Success! {withdraw.User.Name} has withdrawn {withdraw.CurrencyDictionary.Balance} from ATM {withdraw.AutomatedTellerMachine.Alias}. Spend it wisely and have fun!";
+            var genericInfo = $"Success! {withdraw.User.Name} has withdrawn ${withdraw.CurrencyDictionary.Balance} from ATM {withdraw.AutomatedTellerMachine.Alias}. Spend it wisely and have fun!";
 
             var detailedInfo = ReportHelper
                 .GenerateWithdrawDetails(withdraw.CurrencyDictionary);

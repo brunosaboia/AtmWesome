@@ -14,6 +14,7 @@ namespace Coinify.Web.Helpers
             var validMoney = dict
                 .MoneyDictionary
                 .Where(kvp => kvp.Value > 0)
+                .OrderByDescending(kvp => kvp.Key is Note)
                 .ToDictionary(kvp => kvp.Key as IMoney, kvp => kvp.Value);
 
             return validMoney;
