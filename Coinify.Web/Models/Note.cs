@@ -7,6 +7,7 @@ namespace Coinify.Web.Models
     {
         public int NoteId { get; set; }
         [Required]
+        [Range(1, int.MaxValue)]
         [Display(Name = "Note Value")]
         public override int Value { get; set; }
         [NotMapped]

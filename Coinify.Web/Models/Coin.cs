@@ -10,6 +10,7 @@ namespace Coinify.Web.Models
         [Display(Name = "Coin Size")]
         public CoinSize Size { get; set; }
         [Required]
+        [Range(1, int.MaxValue)]
         [Display(Name = "Coin Value")]
         public override int Value { get; set; }
 

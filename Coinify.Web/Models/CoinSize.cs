@@ -10,6 +10,7 @@ namespace Coinify.Web.Models
     {
         public int CoinSizeId { get; set; }
         [Required]
+        [Range(1, int.MaxValue)]
         [Display(Name = "Size (in mm)")]
         public int Size { get; set; }
 
