@@ -8,10 +8,14 @@ namespace Coinify.Web.Models.ViewModels
     public class WithdrawViewModel
     {
         public int WithdrawId { get; set; }
+        [Required]
+        [Range(1, int.MaxValue)]
         public int Amount { get; set; }
         public DateTime WithdrawDate  { get; set; }
+        [Required]
         [Display(Name = "Select ATM")]
         public int AtmId { get; set; }
+        [Required]
         [Display(Name = "Select User")]
         public int UserId { get; set; }
 
