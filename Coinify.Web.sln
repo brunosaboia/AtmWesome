@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26510.0
+VisualStudioVersion = 15.0.26621.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coinify.Web", "Coinify.Web\Coinify.Web.csproj", "{0FF72DFE-EBD8-44EE-8641-C9AE793DBF61}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coinify.Web.Test", "Coinify.Web.Test\Coinify.Web.Test.csproj", "{059122DD-5F26-4BBB-AE7A-CAA2D40613A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coinify.Web.Tests", "Coinify.Web.Tests\Coinify.Web.Tests.csproj", "{1E84884B-50AB-482E-93B6-BBFB7A49A5DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +17,15 @@ Global
 		{0FF72DFE-EBD8-44EE-8641-C9AE793DBF61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FF72DFE-EBD8-44EE-8641-C9AE793DBF61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FF72DFE-EBD8-44EE-8641-C9AE793DBF61}.Release|Any CPU.Build.0 = Release|Any CPU
-		{059122DD-5F26-4BBB-AE7A-CAA2D40613A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{059122DD-5F26-4BBB-AE7A-CAA2D40613A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{059122DD-5F26-4BBB-AE7A-CAA2D40613A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{059122DD-5F26-4BBB-AE7A-CAA2D40613A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E84884B-50AB-482E-93B6-BBFB7A49A5DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E84884B-50AB-482E-93B6-BBFB7A49A5DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E84884B-50AB-482E-93B6-BBFB7A49A5DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E84884B-50AB-482E-93B6-BBFB7A49A5DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4C2478C4-F6CF-4EFF-86BC-A1CA4C8195D2}
 	EndGlobalSection
 EndGlobal

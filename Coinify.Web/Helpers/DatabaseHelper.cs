@@ -8,22 +8,17 @@ namespace Coinify.Web.Helpers
 {
     public static class DatabaseHelper
     {
-        public static void SeedData(this IApplicationBuilder app)
+        public static (
+            CoinSize[] coinSizes,
+            Coin[] coins,
+            Note[] notes,
+            User[] users,
+            AutomatedTellerMachine atm,
+            CurrencyDictionary currenctyDictionary
+            ) CreateEntitiesArrays()
         {
-            var db = app.ApplicationServices.GetService<CoinifyWebContext>();
-
-            db.EnsureSeedData();
-        }
-
-        public static void EnsureSeedData(this CoinifyWebContext context)
-        {
-            if (context.Database.GetPendingMigrations().Count() > 0)
-            {
-                context.Database.Migrate();
-            }
-
             var coinSizes = new[]
-            {
+{
                 new CoinSize()
                 {
                     Size = 10
@@ -144,6 +139,25 @@ namespace Coinify.Web.Helpers
                     Balance = 1000
                 }
             };
+
+            return (coinSizes, coins, notes, users, atm, currencyDictionary);
+        }
+
+        public static void SeedData(this IApplicationBuilder app)
+        {
+            var db = app.ApplicationServices.GetService<CoinifyWebContext>();
+
+            db.EnsureSeedData();
+        }
+
+        public static void EnsureSeedData(this CoinifyWebContext context)
+        {
+            var (coinSizes, coins, notes, users, atm, currencyDictionary) = CreateEntitiesArrays();
+
+            if (context.Database.GetPendingMigrations().Count() > 0)
+            {
+                context.Database.Migrate();
+            }
 
             if (!context.CoinSize.Any())
             {
